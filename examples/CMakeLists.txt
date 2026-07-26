@@ -1,0 +1,2 @@
+add_executable(rich_presence rich_presence.cpp)
+target_link_libraries(rich_presence PRIVATE discordsdk::discordsdk)
