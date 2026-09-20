@@ -100,18 +100,19 @@ elseif(UNIX AND NOT APPLE)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-    set(SDK_SO_PATH "${SDK_DIR}/lib/${CMAKE_BUILD_TYPE}/lib${SDK_LIB_NAME}.so")
+    string(TOLOWER "${CMAKE_BUILD_TYPE}" SDK_CONFIG_DIR)
+    set(SDK_SO_PATH "${SDK_DIR}/lib/${SDK_CONFIG_DIR}/lib${SDK_LIB_NAME}.so")
     
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.tramp.S
-               ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.init.c
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.so.tramp.S
+               ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.so.init.c
         COMMAND ${Python3_EXECUTABLE} ${implib_SOURCE_DIR}/implib-gen.py --dlopen-callback=linux_dlopen_callback -q ${SDK_SO_PATH}
         DEPENDS ${implib_SOURCE_DIR}/implib-gen.py ${SDK_SO_PATH}
     )
 
     target_sources(discordsdk PRIVATE 
-        ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.tramp.S
-        ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.init.c
+        ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.so.tramp.S
+        ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.so.init.c
     )
     target_link_libraries(discordsdk PUBLIC dl)
 endif()
