@@ -69,18 +69,24 @@ target_include_directories(discordsdk
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(SDK_BUILD_TYPE "debug")
+else()
+    set(SDK_BUILD_TYPE "release")
+endif()
+
 if(WIN32)
     if(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
-        set(SDK_LIB_PATH "${SDK_DIR}/lib/$<CONFIG>/arm64/${SDK_LIB_NAME}.lib")
+        set(SDK_LIB_PATH "${SDK_DIR}/lib/${SDK_BUILD_TYPE}/arm64/${SDK_LIB_NAME}.lib")
     else()
-        set(SDK_LIB_PATH "${SDK_DIR}/lib/$<CONFIG>/${SDK_LIB_NAME}.lib")
+        set(SDK_LIB_PATH "${SDK_DIR}/lib/${SDK_BUILD_TYPE}/${SDK_LIB_NAME}.lib")
     endif()
 
     target_link_libraries(discordsdk PUBLIC "${SDK_LIB_PATH}" delayimp)
     target_link_options(discordsdk INTERFACE "/DELAYLOAD:${SDK_LIB_NAME}.dll")
 
 elseif(APPLE)
-    set(SDK_DYLIB_PATH "${SDK_DIR}/lib/$<CONFIG>/lib${SDK_LIB_NAME}.dylib")
+    set(SDK_DYLIB_PATH "${SDK_DIR}/lib/${SDK_BUILD_TYPE}/lib${SDK_LIB_NAME}.dylib")
     target_link_libraries(discordsdk PUBLIC "-Wl,-weak_library,${SDK_DYLIB_PATH}")
 
 elseif(UNIX AND NOT APPLE)
@@ -100,8 +106,7 @@ elseif(UNIX AND NOT APPLE)
 
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-    string(TOLOWER "${CMAKE_BUILD_TYPE}" SDK_CONFIG_DIR)
-    set(SDK_SO_PATH "${SDK_DIR}/lib/${SDK_CONFIG_DIR}/lib${SDK_LIB_NAME}.so")
+    set(SDK_SO_PATH "${SDK_DIR}/lib/${SDK_BUILD_TYPE}/lib${SDK_LIB_NAME}.so")
     
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lib${SDK_LIB_NAME}.so.tramp.S
