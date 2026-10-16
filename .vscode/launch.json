@@ -15,6 +15,18 @@
             "environment": [],
             "console": "integratedTerminal",
             "preLaunchTask": "CMake: build"
+        },
+        {
+            "name": "(lldb): Rich Presence Example",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/examples/rich_presence",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "lldb",
+            "preLaunchTask": "CMake: build"
         }
     ]
 }

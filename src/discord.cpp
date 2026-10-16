@@ -65,9 +65,17 @@ bool discordpp::IsAvailable()
 
 #elif defined(__APPLE__)
 
+extern "C" void Discord_RunCallbacks(void)
+    __attribute__((weak_import));
+
 bool discordpp::IsAvailable()
 {
-    return Discord_RunCallbacks != nullptr;
+    if (Discord_RunCallbacks == nullptr)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 #elif defined(__linux__)
